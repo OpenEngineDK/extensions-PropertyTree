@@ -15,6 +15,8 @@
 #include <sstream>
 #include "yaml/yaml.h"
 
+#include <Math/Vector.h>
+
 namespace OpenEngine {
 namespace Utils {
 
@@ -72,6 +74,14 @@ public:
 
     Core::IEvent<PropertiesChangedEventArg>& PropertiesChangedEvent() {return changedEvent; }
 };
+
+void operator >> (const YAML::Node& node, Math::Vector<3,float>& v);
+//  {
+//     node[0] >> v[0];
+//     node[1] >> v[1];
+//     node[2] >> v[2];
+// }
+
 
 } // NS Utils
 } // NS OpenEngine
