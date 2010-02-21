@@ -1,0 +1,7 @@
+# PropertyTree dist
+
+# standard set of extensions
+darcs /extensions/PropertyTree        http://openengine.dk/code/extensions/PropertyTree
+
+darcs-dev /extensions/PropertyTree    fh.daimi.au.dk:/users/cgd/code/extensions/PropertyTree
+
