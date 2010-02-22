@@ -17,6 +17,8 @@
 
 #include <Math/Vector.h>
 
+#include <Core/IModule.h>
+
 namespace OpenEngine {
 namespace Utils {
 
@@ -29,7 +31,7 @@ struct PropertiesChangedEventArg {
  *
  * @class PropertyTree PropertyTree.h PropertyTree/Utils/PropertyTree.h
  */
-class PropertyTree {
+    class PropertyTree : public Core::IModule {
 private:
     YAML::Node doc;
 
@@ -42,6 +44,8 @@ private:
 
     const YAML::Node* NodeForKeyPath(std::string key);
 
+    Timer reloadTimer;
+        
 public:
     
 /**
@@ -56,7 +60,9 @@ public:
     void ReloadIfNeeded();
     void Reload();
     
-
+    void Handle(Core::InitializeEventArg arg);
+    void Handle(Core::ProcessEventArg arg);
+    void Handle(Core::DeinitializeEventArg arg);
 
 /**
  * Returns the property for key, or def if it doesn't exist.

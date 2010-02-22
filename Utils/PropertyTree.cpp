@@ -18,6 +18,7 @@ namespace Utils {
 
 using namespace std;
 using namespace boost::filesystem;
+using namespace Core;
 
 PropertyTree::PropertyTree(string fname) : filename(fname) {
 }
@@ -73,6 +74,17 @@ bool PropertyTree::HaveKey(string key) {
 string PropertyTree::GetString(string key) {
     return "";
 }
+
+void PropertyTree::Handle(InitializeEventArg arg) {    
+    reloadTimer.Start();
+}
+void PropertyTree::Handle(ProcessEventArg arg) {
+    if (reloadTimer.GetElapsedIntervals(1000000)) {
+        reloadTimer.Reset();
+        ReloadIfNeeded();
+    }
+}
+void PropertyTree::Handle(DeinitializeEventArg arg) {}
 
 void operator >> (const YAML::Node& node, Math::Vector<3,float>& v) {
      node[0] >> v[0];
