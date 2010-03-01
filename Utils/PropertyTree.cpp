@@ -24,23 +24,26 @@ PropertyTree::PropertyTree(string fname) : filename(fname) {
 }
 
 void PropertyTree::ReloadIfNeeded() {
-
-
     time_t new_timestamp = last_write_time(filename);
     if (new_timestamp != last_timestamp) {
         Reload();
     }
 }
 
+bool PropertyTree::HaveNode(std::string key) {
+    return NodeForKeyPath(key);
+}
+
+PropertyTreeNode PropertyTree::GetNode(std::string key) {
+    return PropertyTreeNode(NodeForKeyPath(key));
+}
+
 const YAML::Node* PropertyTree::NodeForKeyPath(string key) {
-
     using namespace boost;
-
     vector<string> paths;
     split(paths,key,is_any_of("."));
 
     const YAML::Node* node = &doc;
-
     for (vector<string>::iterator itr = paths.begin();
          itr != paths.end();
          itr++) {
@@ -48,9 +51,7 @@ const YAML::Node* PropertyTree::NodeForKeyPath(string key) {
         node = node->FindValue(pathPart);
         if (!node)
             return NULL;
-
     }
-
     return node;
 }
 
@@ -62,9 +63,18 @@ void PropertyTree::Reload() {
 
     YAML::Parser parser(fin);
     parser.GetNextDocument(doc);
+    delete root;
+    root = new PropertyTreeNode(&doc);
 
     PropertiesChangedEventArg arg;
     changedEvent.Notify(arg);
+}
+
+
+unsigned int PropertyTree::GetSize(std::string key) {    
+    if (const YAML::Node *node = NodeForKeyPath(key))
+        return node->size();
+    return 0;
 }
 
 bool PropertyTree::HaveKey(string key) {
@@ -91,6 +101,7 @@ void operator >> (const YAML::Node& node, Math::Vector<3,float>& v) {
      node[1] >> v[1];
      node[2] >> v[2];
 }
+
 
 
 } // NS Utils

@@ -23,7 +23,48 @@ namespace OpenEngine {
 namespace Utils {
 
 struct PropertiesChangedEventArg {
-        
+
+};
+
+class PropertyTreeNode {
+    friend class PropertyTree;
+protected:
+    PropertyTreeNode(const YAML::Node* n) : node(n) {}
+
+private:
+    const YAML::Node* node;
+public:
+    PropertyTreeNode GetNode(std::string key) {
+        return PropertyTreeNode(node->FindValue(key));
+    }
+
+    bool HaveNode(std::string key) {
+        return node->FindValue(key);
+    }
+
+    PropertyTreeNode GetNode(unsigned int key) {
+        return PropertyTreeNode(node->FindValue(key));
+    }
+
+    unsigned int GetSize() {
+        return node->size();
+    }
+
+    template <class T>
+    T Get() {
+        T val;
+        *node >> val;
+        return val;
+    }
+    
+    template <class T>
+    T Get(std::string key, T def) {
+        T val = def;
+        if (const YAML::Node* n = node->FindValue(key))
+            *n >> val;
+        return val;
+    }
+    
 };
 
 /**
@@ -31,7 +72,7 @@ struct PropertiesChangedEventArg {
  *
  * @class PropertyTree PropertyTree.h PropertyTree/Utils/PropertyTree.h
  */
-    class PropertyTree : public Core::IModule {
+class PropertyTree : public Core::IModule {
 private:
     YAML::Node doc;
 
@@ -45,12 +86,13 @@ private:
     const YAML::Node* NodeForKeyPath(std::string key);
 
     Timer reloadTimer;
-        
+
+    PropertyTreeNode* root;
 public:
-    
+
 /**
  * Creates a PropertyTree assioated with a file, but doesnt load it.
- */    
+ */
     PropertyTree(std::string path);
 
 /**
@@ -59,24 +101,40 @@ public:
 
     void ReloadIfNeeded();
     void Reload();
-    
+
     void Handle(Core::InitializeEventArg arg);
     void Handle(Core::ProcessEventArg arg);
     void Handle(Core::DeinitializeEventArg arg);
 
+    bool HaveNode(std::string key);
+    PropertyTreeNode GetNode(std::string key);
+
 /**
  * Returns the property for key, or def if it doesn't exist.
- */    
+ */
     template <class T>
     T Get(std::string key, T def) {
         T val = def;
-        //if (HaveKey(key)) {
-        if (const YAML::Node *node = NodeForKeyPath(key)) {
-            *node >> val;
+        if (HaveNode(key)) {
+            PropertyTreeNode n = GetNode(key);
+            val = n.Get<T>();
         }
         return val;
     }
-        
+    template <class T>
+    T GetIdxMap(std::string key, unsigned int idx, std::string mkey, T def) {
+        T val = def;
+        //if (HaveKey(key)) {
+        if (const YAML::Node *node = NodeForKeyPath(key)) {
+            const YAML::Node& n2 = (*node)[idx];
+            if (n2.FindValue(mkey))
+                n2[mkey] >> val;
+        }
+        return val;
+    }
+    
+
+    unsigned int GetSize(std::string key);
 
     Core::IEvent<PropertiesChangedEventArg>& PropertiesChangedEvent() {return changedEvent; }
 };
