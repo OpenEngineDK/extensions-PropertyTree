@@ -20,7 +20,7 @@ using namespace std;
 using namespace boost::filesystem;
 using namespace Core;
 
-PropertyTree::PropertyTree(string fname) : filename(fname) {
+    PropertyTree::PropertyTree(string fname) : filename(fname), root(NULL) {
 }
 
 void PropertyTree::ReloadIfNeeded() {
