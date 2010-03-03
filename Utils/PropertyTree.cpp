@@ -20,8 +20,30 @@ using namespace std;
 using namespace boost::filesystem;
 using namespace Core;
 
-    PropertyTree::PropertyTree(string fname) : filename(fname), root(NULL) {
+
+const YAML::Node* PropertyTreeNode::NodeForKeyPath(string key) {
+    using namespace boost;
+    vector<string> paths;
+    split(paths,key,is_any_of("."));
+
+    const YAML::Node* node = _node;
+    for (vector<string>::iterator itr = paths.begin();
+         itr != paths.end();
+         itr++) {
+        string pathPart = *itr;
+        node = node->FindValue(pathPart);
+        if (!node)
+            return NULL;
+    }
+    return node;
 }
+
+
+PropertyTree::PropertyTree(string fname) : filename(fname), root(NULL) {
+}
+
+
+
 
 void PropertyTree::ReloadIfNeeded() {
     time_t new_timestamp = last_write_time(filename);

@@ -29,38 +29,48 @@ struct PropertiesChangedEventArg {
 class PropertyTreeNode {
     friend class PropertyTree;
 protected:
-    PropertyTreeNode(const YAML::Node* n) : node(n) {}
+    PropertyTreeNode(const YAML::Node* n) : _node(n) {}
 
 private:
-    const YAML::Node* node;
+    const YAML::Node* _node;
+
+    const YAML::Node* NodeForKeyPath(std::string key);
+
 public:
     PropertyTreeNode GetNode(std::string key) {
-        return PropertyTreeNode(node->FindValue(key));
+        return PropertyTreeNode(_node->FindValue(key));
     }
 
     bool HaveNode(std::string key) {
-        return node->FindValue(key);
+        return _node->FindValue(key);
     }
 
     PropertyTreeNode GetNode(unsigned int key) {
-        return PropertyTreeNode(node->FindValue(key));
+        return PropertyTreeNode(_node->FindValue(key));
     }
 
     unsigned int GetSize() {
-        return node->size();
+        return _node->size();
     }
 
     template <class T>
     T Get() {
         T val;
-        *node >> val;
+        *_node >> val;
         return val;
     }
     
     template <class T>
     T Get(std::string key, T def) {
         T val = def;
-        if (const YAML::Node* n = node->FindValue(key))
+        if (const YAML::Node* n = _node->FindValue(key))
+            *n >> val;
+        return val;
+    }
+    template <class T>
+    T GetPath(std::string key, T def) {
+        T val = def;
+        if (const YAML::Node* n = NodeForKeyPath(key))
             *n >> val;
         return val;
     }
