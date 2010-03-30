@@ -16,7 +16,7 @@
 #include "yaml/yaml.h"
 
 #include <Math/Vector.h>
-
+#include <Utils/DateTime.h>
 #include <Core/IModule.h>
 
 namespace OpenEngine {
@@ -86,7 +86,7 @@ class PropertyTree : public Core::IModule {
 private:
     YAML::Node doc;
 
-    time_t last_timestamp;
+    DateTime lastTimestamp;
     std::string filename;
     Core::Event<PropertiesChangedEventArg> changedEvent;
 

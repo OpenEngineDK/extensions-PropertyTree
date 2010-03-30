@@ -8,7 +8,7 @@
 //--------------------------------------------------------------------
 
 #include "PropertyTree.h"
-#include <boost/filesystem/operations.hpp>
+#include <Resources/File.h>
 #include <boost/algorithm/string.hpp>
 
 #include <fstream>
@@ -17,7 +17,6 @@ namespace OpenEngine {
 namespace Utils {
 
 using namespace std;
-using namespace boost::filesystem;
 using namespace Core;
 
 
@@ -46,8 +45,8 @@ PropertyTree::PropertyTree(string fname) : filename(fname), root(NULL) {
 
 
 void PropertyTree::ReloadIfNeeded() {
-    time_t new_timestamp = last_write_time(filename);
-    if (new_timestamp != last_timestamp) {
+    DateTime newTimestamp = Resources::File::GetLastModified(filename);
+    if (newTimestamp != lastTimestamp) {
         Reload();
     }
 }
@@ -78,8 +77,8 @@ const YAML::Node* PropertyTree::NodeForKeyPath(string key) {
 }
 
 void PropertyTree::Reload() {
-    time_t new_timestamp = last_write_time(filename);
-    last_timestamp = new_timestamp;
+    DateTime newTimestamp = Resources::File::GetLastModified(filename);
+    lastTimestamp = newTimestamp;
 
     ifstream fin(filename.c_str());
 
