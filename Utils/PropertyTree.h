@@ -150,6 +150,7 @@ public:
 };
 
 void operator >> (const YAML::Node& node, Math::Vector<3,float>& v);
+void operator >> (const YAML::Node& node, Math::Vector<4,float>& v);
 //  {
 //     node[0] >> v[0];
 //     node[1] >> v[1];
