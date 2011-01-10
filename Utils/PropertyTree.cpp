@@ -39,6 +39,7 @@ const YAML::Node* PropertyTreeNode::NodeForKeyPath(string key) {
 
 
 PropertyTree::PropertyTree(string fname) : filename(fname), root(NULL) {
+    Reload(true);
 }
 
 
@@ -76,10 +77,11 @@ const YAML::Node* PropertyTree::NodeForKeyPath(string key) {
     return node;
 }
 
-void PropertyTree::Reload() {
-    DateTime newTimestamp = Resources::File::GetLastModified(filename);
-    lastTimestamp = newTimestamp;
-
+void PropertyTree::Reload(bool skipTS) {
+    if (!skipTS) {
+        DateTime newTimestamp = Resources::File::GetLastModified(filename);    
+        lastTimestamp = newTimestamp;
+    }
     ifstream fin(filename.c_str());
 
     YAML::Parser parser(fin);

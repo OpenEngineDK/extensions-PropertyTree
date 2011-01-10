@@ -110,7 +110,7 @@ public:
  */
 
     void ReloadIfNeeded();
-    void Reload();
+    void Reload(bool skipTS=false);
 
     void Handle(Core::InitializeEventArg arg);
     void Handle(Core::ProcessEventArg arg);
