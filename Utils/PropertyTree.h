@@ -12,6 +12,7 @@
 #define _OE_PROPERTY_TREE2_H_
 
 #include <string>
+#include <set>
 #include "yaml/yaml.h"
 
 #include <Core/Event.h>
@@ -27,7 +28,10 @@ class PropertyTreeNode;
 using namespace std;
 
 class PropertiesChangedEventArg {
-    
+public:
+    PropertyTreeNode* node;
+
+    PropertiesChangedEventArg(PropertyTreeNode* n) :node(n) {}
 };
 
 /**
@@ -37,7 +41,11 @@ class PropertiesChangedEventArg {
  */
 class PropertyTree : public Core::IListener<Core::ProcessEventArg> {
     friend class PropertyTreeNode;    
+protected:    
+    void AddToDirtySet(PropertyTreeNode* n);
+
 private:
+    set<PropertyTreeNode*> dirtySet;
     PropertyTreeNode* root;
     YAML::Node doc;
 

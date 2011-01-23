@@ -21,11 +21,11 @@ namespace Utils {
 using namespace std;
 
 PropertyTree::PropertyTree() {
-    root = new PropertyTreeNode(this, "");
+    root = new PropertyTreeNode(this, NULL,  "");
 }
 
 PropertyTree::PropertyTree(string fname) : filename(fname) {
-    root = new PropertyTreeNode(this, "");
+    root = new PropertyTreeNode(this, NULL, "");
     LoadFromFile(fname);
 }
 
@@ -34,6 +34,10 @@ PropertyTreeNode* PropertyTree::GetRootNode() {
 }
 
 
+void PropertyTree::AddToDirtySet(PropertyTreeNode* n) {
+    dirtySet.insert(n);
+}
+    
 bool PropertyTree::HaveKey(std::string p, std::string k) {
     const YAML::Node* node = NodeForKeyPath(p);
     if (!node)
@@ -131,8 +135,8 @@ void PropertyTree::Reload(bool skipTS) {
     }
     LoadFromFile(filename);
     logger.info << "Reloading" << logger.end;
-    // Send event somehow...
-    PropertiesChangedEventArg arg;
+
+    PropertiesChangedEventArg arg(root);
     changedEvent.Notify(arg);
 }
 
@@ -173,9 +177,7 @@ public:
         
         } else if (node->kind == PropertyTreeNode::SCALAR) {
             out << node->value;
-        }
-
-        
+        }        
     }
     
 };
@@ -201,6 +203,17 @@ void PropertyTree::Handle(Core::ProcessEventArg arg) {
     if (reloadTimer.GetElapsedIntervals(1000000)) {
         reloadTimer.Reset();
         ReloadIfNeeded();
+    }
+    if (dirtySet.size()) {
+        for(set<PropertyTreeNode*>::iterator itr = dirtySet.begin();
+            itr != dirtySet.end();
+            itr++) {
+            PropertyTreeNode* n = *itr;
+            PropertiesChangedEventArg arg(n);
+            n->PropertiesChangedEvent().Notify(arg);
+            logger.error << "dirty " << n->nodePath << logger.end;
+        }
+        dirtySet.clear();
     }
 
 }

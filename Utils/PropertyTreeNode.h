@@ -18,11 +18,15 @@
 #include <Math/Vector.h>
 #include <Logging/Logger.h>
 #include <boost/algorithm/string.hpp>
+#include <Core/Event.h>
+#include <Core/EngineEvents.h>
+
 
 namespace OpenEngine {
 namespace Utils {
 
 class PropertyTreeNode;
+class PropertiesChangedEventArg;
 
 using namespace std;
     template<class T>
@@ -76,8 +80,10 @@ class PropertyTreeNode {
 
     friend class PropertyTree;
     
-    //private:
-
+private:
+    Core::Event<PropertiesChangedEventArg> changedEvent;
+    void SetDirty();
+    PropertyTreeNode* parent;
 public:
     PropertyTree* tree;
     string nodePath;
@@ -93,21 +99,21 @@ public:
 
     Kind kind;
 
-    PropertyTreeNode(PropertyTree* t, string p) 
-        : tree(t)
+    PropertyTreeNode(PropertyTree* t, PropertyTreeNode* parent, string p) 
+        : parent(parent)
+        , tree(t)
         , nodePath(p)
         , isSet(false)
         , kind(SCALAR)
     {
     }
     void Refresh(bool recursive=false);
-    void SetValue(string v) {
-        isSet = true;
-        value = v;
-    }
+    void SetValue(string v);
 public:    
     ~PropertyTreeNode();
 
+    PropertyTreeNode* GetParent();
+    
     bool IsArray() {
         return (kind == ARRAY);
     }
@@ -146,6 +152,7 @@ public:
             isSet = true;
             value = ConvertToString(val);
         }
+        SetDirty();
     }
 
     unsigned int GetSize();
@@ -156,6 +163,10 @@ public:
     PropertyTreeNode* GetNode(string key);
 
     bool HaveNode(string kp);
+    
+    Core::IEvent<PropertiesChangedEventArg>& PropertiesChangedEvent() {
+        return changedEvent;
+    }
 
 };
 } // NS Utils

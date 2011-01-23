@@ -114,7 +114,7 @@ PropertyTreeNode* PropertyTreeNode::GetNodePath(string nodePath) {
  PropertyTreeNode* PropertyTreeNode::GetNodeIdx(unsigned int i) {
      kind = PropertyTreeNode::ARRAY;
      if (i >= subNodesArray.size()) 
-         subNodesArray.push_back(new PropertyTreeNode(tree,""));     
+         subNodesArray.push_back(new PropertyTreeNode(tree,this,""));     
      return subNodesArray[i];
  }
 
@@ -125,7 +125,7 @@ PropertyTreeNode* PropertyTreeNode::GetNode(string key) {
     if (nodePath.compare("") != 0)
         p = nodePath + "." + key;
     if (!subNodes.count(key)) {
-        subNodes[key] = new PropertyTreeNode(tree,p);
+        subNodes[key] = new PropertyTreeNode(tree,this,p);
     }
 
     return subNodes[key];
@@ -139,6 +139,24 @@ bool PropertyTreeNode::HaveNode(string kp) {
     return subNodes.count(kp);
 }
 
+
+void PropertyTreeNode::SetDirty() {
+    tree->AddToDirtySet(this);
+    if (parent)
+        parent->SetDirty();
+    
+}
+PropertyTreeNode* PropertyTreeNode::GetParent() {
+    return parent;
+}
+
+void PropertyTreeNode::SetValue(string v) {
+    isSet = true;
+    if (value.compare(v) != 0) {
+        value = v;
+        SetDirty();
+    }
+}
 
 
 } // NS Utils
