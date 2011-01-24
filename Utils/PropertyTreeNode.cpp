@@ -26,6 +26,19 @@ Vector<3,float> ConvertFromString<Vector<3,float> >(string s) {
 }
 
 template <>
+Math::Vector<4,float> ConvertFromString<Math::Vector<4,float> >(string s) {
+    Vector<4,float> v;
+    istringstream istream(s);
+    istream >> v[0];
+    istream >> v[1];
+    istream >> v[2];    
+    istream >> v[3];    
+    return v;
+
+}
+
+
+template <>
 Vector<3,float> ConvertFromSpecialNode<Vector<3,float> >(PropertyTreeNode* n,
                                                          Vector<3,float> def) {
     Vector<3,float> v = def;
@@ -33,6 +46,19 @@ Vector<3,float> ConvertFromSpecialNode<Vector<3,float> >(PropertyTreeNode* n,
         v[0] = n->GetIdx(0,v[0]);
         v[1] = n->GetIdx(1,v[0]);
         v[2] = n->GetIdx(2,v[0]);
+    }
+    return v;
+}
+
+template <>
+Vector<4,float> ConvertFromSpecialNode<Vector<4,float> >(PropertyTreeNode* n,
+                                                         Vector<4,float> def) {
+    Vector<4,float> v = def;
+    if (n->IsArray()) {
+        v[0] = n->GetIdx(0,v[0]);
+        v[1] = n->GetIdx(1,v[0]);
+        v[2] = n->GetIdx(2,v[0]);
+        v[3] = n->GetIdx(3,v[0]);
     }
     return v;
 }
@@ -48,12 +74,34 @@ string ConvertToString<Vector<3,float> >(Vector<3,float> v) {
 }
 
 template <>
+string ConvertToString<Vector<4,float> >(Vector<4,float> v) {
+    ostringstream ostream;
+    ostream << v[0] << " ";
+    ostream << v[1] << " ";
+    ostream << v[2] << " ";
+    ostream << v[3] << " ";
+    return ostream.str();
+}
+
+template <>
 bool ConvertToSpecial<Vector<3,float> >(PropertyTreeNode* n, Vector<3,float> v) {
     n->kind = PropertyTreeNode::ARRAY;
     
     n->GetNodeIdx(0)->Set(v[0]);
     n->GetNodeIdx(1)->Set(v[1]);
     n->GetNodeIdx(2)->Set(v[2]);
+
+    return true;
+}
+
+template <>
+bool ConvertToSpecial<Vector<4,float> >(PropertyTreeNode* n, Vector<4,float> v) {
+    n->kind = PropertyTreeNode::ARRAY;
+    
+    n->GetNodeIdx(0)->Set(v[0]);
+    n->GetNodeIdx(1)->Set(v[1]);
+    n->GetNodeIdx(2)->Set(v[2]);
+    n->GetNodeIdx(3)->Set(v[3]);
 
     return true;
 }

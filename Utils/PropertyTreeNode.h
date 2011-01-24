@@ -39,6 +39,9 @@ using namespace std;
     template <>
     string ConvertToString<Math::Vector<3,float> >(Math::Vector<3,float>);
 
+    template <>
+    string ConvertToString<Math::Vector<3,float> >(Math::Vector<3,float>);
+
 
     template <class T>
     bool ConvertToSpecial(PropertyTreeNode* n, T val) {
@@ -48,6 +51,9 @@ using namespace std;
     template <>
     bool ConvertToSpecial<Math::Vector<3,float> >(PropertyTreeNode* n, 
                                                   Math::Vector<3,float> v);
+    template <>
+    bool ConvertToSpecial<Math::Vector<4,float> >(PropertyTreeNode* n, 
+                                                  Math::Vector<4,float> v);
     
 
     template <class T>
@@ -61,6 +67,9 @@ using namespace std;
     template <>
     Math::Vector<3,float> ConvertFromString<Math::Vector<3,float> >(string s);   
 
+    template <>
+    Math::Vector<4,float> ConvertFromString<Math::Vector<4,float> >(string s);   
+
     template <class T>
     T ConvertFromSpecialNode(PropertyTreeNode* n, T def) {
         return def;
@@ -69,6 +78,10 @@ using namespace std;
     template <>
     Math::Vector<3,float> ConvertFromSpecialNode<Math::Vector<3,float> >
     (PropertyTreeNode* n, Math::Vector<3,float> def);
+
+    template <>
+    Math::Vector<4,float> ConvertFromSpecialNode<Math::Vector<4,float> >
+    (PropertyTreeNode* n, Math::Vector<4,float> def);
 
 
 /**
