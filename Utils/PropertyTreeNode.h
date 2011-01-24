@@ -180,8 +180,12 @@ public:
     Core::IEvent<PropertiesChangedEventArg>& PropertiesChangedEvent() {
         return changedEvent;
     }
+    
+    string ToString(int tabs=0);
 
 };
+
+
 } // NS Utils
 } // NS OpenEngine
 
