@@ -121,7 +121,7 @@ public:
     {
     }
     void Refresh(bool recursive=false);
-    void SetValue(string v);
+    void SetValue(const string v);
 public:    
     ~PropertyTreeNode();
 
