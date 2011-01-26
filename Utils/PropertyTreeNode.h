@@ -110,7 +110,7 @@ private:
     void SetDirty(PropertiesChangedEventArg::ChangeFlag);
     PropertyTreeNode* parent;
     PropertyTree::PropertyType type;
-
+    bool isRead;
 public:
     PropertyTree* tree;
     string nodePath;
@@ -129,6 +129,7 @@ public:
     PropertyTreeNode(PropertyTree* t, PropertyTreeNode* parent, string p)
         :  parent(parent)
         , type(PropertyTree::UNKNOWN)
+        , isRead(false)
         , tree(t)
         , nodePath(p)
         , isSet(false)
@@ -145,6 +146,10 @@ public:
 
     PropertyTreeNode* GetParent();
 
+    bool HaveBeenRead() {
+        return isRead;
+    }
+
     bool IsArray() {
         return (kind == ARRAY);
     }
@@ -158,12 +163,13 @@ public:
     template <class T>
     T GetIdx(int i, T def) {
         PropertyTreeNode* node = GetNodeIdx(i);
+        logger.error << "GetN: " << node->GetNodePath() << logger.end;
         return node->Get(def);
     }
 
     template <class T>
     T GetPath(string keyPath, T def) {
-        PropertyTreeNode* node = GetNodePath(keyPath);
+        PropertyTreeNode* node = GetNodePath(keyPath);        
         return node->Get(def);
     }
 
@@ -174,7 +180,8 @@ public:
     }
 
     template <class T>
-    T Get( T def) {
+    T Get(T def) {
+        isRead = true;
         PropertyTree::PropertyType oldType = type;
         type = WhatType<T>();
 
@@ -186,19 +193,23 @@ public:
             T val = ConvertFromString<T>(value);
             return val;
         } else {
-            return ConvertFromSpecialNode<T>(this, def);
+            T val = ConvertFromSpecialNode<T>(this, def);
+            Set(val,true);
+            return val;
         }
     }
 
     template <class T>
-    void Set(T val) {
+    void Set(T val, bool skipEvent=false) {
         PropertyTree::PropertyType oldType = type;
         type = WhatType<T>();
 
         if (!ConvertToSpecial<T>(this, val)) {
-            isSet = true;
+            isSet = !skipEvent;
             value = ConvertToString(val);
         }
+        if (skipEvent)
+            return;
         PropertiesChangedEventArg::ChangeFlag flag = PropertiesChangedEventArg::VALUE;
         if (oldType != type)
             flag = PropertiesChangedEventArg::ChangeFlag(flag |

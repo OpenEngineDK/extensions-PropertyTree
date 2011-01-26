@@ -83,20 +83,21 @@ public:
 
     const YAML::Node* NodeForKeyPath(string key);
 
-    template<class T>
-    void GetPath(string p, string k, T* val) {
-        const YAML::Node* node = NodeForKeyPath(p);
-        const YAML::Node* valNode = node->FindValue(k);
-        *valNode >> *val;
-    }
+    // template<class T>
+    // void GetPath(string p, string k, T* val) {
+    //     const YAML::Node* node = NodeForKeyPath(p);
+    //     const YAML::Node* valNode = node->FindValue(k);
+    //     *valNode >> *val;
+    // }
 
     bool HaveKey(std::string p, std::string k);
 
 public:
     void LoadFromFile(std::string fname);    
-    void SaveToFile(std::string file);
+    void SaveToFile(std::string file, bool comments=false);
 
     void Save();
+    void SaveWithComments();
 
     PropertyTree();
     PropertyTree(std::string fname);

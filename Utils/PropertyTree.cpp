@@ -147,8 +147,9 @@ class Emitter  {
 public:
     YAML::Emitter out;
     PropertyTree *tree;
+    bool comments;
 
-    Emitter(PropertyTree* t) : tree(t) {}
+    Emitter(PropertyTree* t, bool comments) : tree(t), comments(comments) {}
     
     void EmitArray(PropertyTreeNode* node) {
         if (node->GetType() == PropertyTree::VEC3F) {
@@ -182,6 +183,8 @@ public:
         
         } else if (node->kind == PropertyTreeNode::SCALAR) {
             out << node->value;
+            if (comments && !node->HaveBeenRead())
+                out << YAML::Comment("Never read");
         }        
     }
     
@@ -191,9 +194,14 @@ void PropertyTree::Save() {
     SaveToFile(filename);
 }
 
-void PropertyTree::SaveToFile(string file) {
+void PropertyTree::SaveWithComments() {
+    SaveToFile(filename, true);
+}
+
+
+void PropertyTree::SaveToFile(string file, bool comments) {
     
-    Emitter e(this);
+    Emitter e(this,comments);
     
     e.Emit(root);
     

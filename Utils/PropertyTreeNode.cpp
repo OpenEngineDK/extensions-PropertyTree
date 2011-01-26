@@ -52,11 +52,14 @@ template <>
 Vector<3,float> ConvertFromSpecialNode<Vector<3,float> >(PropertyTreeNode* n,
                                                          Vector<3,float> def) {
     Vector<3,float> v = def;
-    if (n->IsArray()) {
-        v[0] = n->GetIdx(0,v[0]);
-        v[1] = n->GetIdx(1,v[0]);
-        v[2] = n->GetIdx(2,v[0]);
-    }
+    n->kind = PropertyTreeNode::ARRAY;
+
+    logger.error << "Setting vector: " << n->GetNodePath() << logger.end;
+
+    v[0] = n->GetIdx(0,v[0]);
+    v[1] = n->GetIdx(1,v[0]);
+    v[2] = n->GetIdx(2,v[0]);
+    
     return v;
 }
 
@@ -64,12 +67,13 @@ template <>
 Vector<4,float> ConvertFromSpecialNode<Vector<4,float> >(PropertyTreeNode* n,
                                                          Vector<4,float> def) {
     Vector<4,float> v = def;
-    if (n->IsArray()) {
-        v[0] = n->GetIdx(0,v[0]);
-        v[1] = n->GetIdx(1,v[0]);
-        v[2] = n->GetIdx(2,v[0]);
-        v[3] = n->GetIdx(3,v[0]);
-    }
+    n->kind = PropertyTreeNode::ARRAY;
+
+    v[0] = n->GetIdx(0,v[0]);
+    v[1] = n->GetIdx(1,v[0]);
+    v[2] = n->GetIdx(2,v[0]);
+    v[3] = n->GetIdx(3,v[0]);       
+    
     return v;
 }
 
