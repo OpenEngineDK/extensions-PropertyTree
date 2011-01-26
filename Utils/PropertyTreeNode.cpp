@@ -8,13 +8,22 @@
 //--------------------------------------------------------------------
 
 #include "PropertyTreeNode.h"
-
+#include <Utils/Convert.h>
 
 namespace OpenEngine {
 namespace Utils {
 
 using namespace Math;
 using namespace std;
+
+    // Typing
+
+template <> PropertyTree::PropertyType WhatType<Vector<3,float> >() 
+{ return PropertyTree::VEC3F;}
+template <> PropertyTree::PropertyType WhatType<float >() 
+{ return PropertyTree::FLOAT;}
+
+    // Conversion
 
 template <>
 Vector<3,float> ConvertFromString<Vector<3,float> >(string s) {
@@ -105,6 +114,15 @@ bool ConvertToSpecial<Vector<4,float> >(PropertyTreeNode* n, Vector<4,float> v) 
     n->GetNodeIdx(3)->Set(v[3]);
 
     return true;
+}
+
+
+PropertyTree* PropertyTreeNode::GetTree() {
+    return tree;
+}
+
+PropertyTree::PropertyType PropertyTreeNode::GetType() {
+    return type;
 }
 
 
@@ -205,8 +223,12 @@ PropertyTreeNode* PropertyTreeNode::GetNodePath(string nodePath) {
 
  PropertyTreeNode* PropertyTreeNode::GetNodeIdx(unsigned int i) {
      kind = PropertyTreeNode::ARRAY;
+     string key = Convert::ToString(i);
+     string p = key;
+     if (nodePath.compare("") != 0)
+         p = nodePath + "." + key;     
      if (i >= subNodesArray.size())
-         subNodesArray.push_back(new PropertyTreeNode(tree,this,""));
+         subNodesArray.push_back(new PropertyTreeNode(tree,this,p));
      return subNodesArray[i];
  }
 
@@ -232,10 +254,10 @@ bool PropertyTreeNode::HaveNode(string kp) {
 }
 
 
-void PropertyTreeNode::SetDirty() {
-    tree->AddToDirtySet(this);
+void PropertyTreeNode::SetDirty(PropertiesChangedEventArg::ChangeFlag f) {
+    tree->AddToDirtySet(this, f);
     if (parent)
-        parent->SetDirty();
+        parent->SetDirty(f);
 
 }
 PropertyTreeNode* PropertyTreeNode::GetParent() {
@@ -246,7 +268,7 @@ void PropertyTreeNode::SetValue(string v) {
     isSet = true;
     if (value.compare(v) != 0) {
         value = v;
-        SetDirty();
+        SetDirty(PropertiesChangedEventArg::VALUE);
     }
 }
 

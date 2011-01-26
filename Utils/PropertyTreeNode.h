@@ -1,4 +1,4 @@
-// 
+//
 // -------------------------------------------------------------------
 // Copyright (C) 2007 OpenEngine.dk (See AUTHORS)
 //
@@ -29,13 +29,25 @@ class PropertyTreeNode;
 class PropertiesChangedEventArg;
 
 using namespace std;
+    // Typing
+
+    template <class T>
+    PropertyTree::PropertyType WhatType() {
+        return PropertyTree::UNKNOWN;
+    }
+
+    template <> PropertyTree::PropertyType WhatType<Math::Vector<3,float> >();
+    template <> PropertyTree::PropertyType WhatType<float >();
+
+    // String conversion
+
     template<class T>
     string ConvertToString(T val) {
         ostringstream ostream;
         ostream << val;
-        return ostream.str();        
+        return ostream.str();
     }
-    
+
     template <>
     string ConvertToString<Math::Vector<3,float> >(Math::Vector<3,float>);
 
@@ -49,12 +61,12 @@ using namespace std;
     }
 
     template <>
-    bool ConvertToSpecial<Math::Vector<3,float> >(PropertyTreeNode* n, 
+    bool ConvertToSpecial<Math::Vector<3,float> >(PropertyTreeNode* n,
                                                   Math::Vector<3,float> v);
     template <>
-    bool ConvertToSpecial<Math::Vector<4,float> >(PropertyTreeNode* n, 
+    bool ConvertToSpecial<Math::Vector<4,float> >(PropertyTreeNode* n,
                                                   Math::Vector<4,float> v);
-    
+
 
     template <class T>
     T ConvertFromString(string s) {
@@ -65,10 +77,10 @@ using namespace std;
     }
 
     template <>
-    Math::Vector<3,float> ConvertFromString<Math::Vector<3,float> >(string s);   
+    Math::Vector<3,float> ConvertFromString<Math::Vector<3,float> >(string s);
 
     template <>
-    Math::Vector<4,float> ConvertFromString<Math::Vector<4,float> >(string s);   
+    Math::Vector<4,float> ConvertFromString<Math::Vector<4,float> >(string s);
 
     template <class T>
     T ConvertFromSpecialNode(PropertyTreeNode* n, T def) {
@@ -89,14 +101,16 @@ using namespace std;
  *
  * @class PropertyTreeNode PropertyTreeNode.h ons/PropertyTree/Utils/PropertyTreeNode.h
  */
-class PropertyTreeNode {    
-
+class PropertyTreeNode {
+protected:
     friend class PropertyTree;
-    
+
 private:
     Core::Event<PropertiesChangedEventArg> changedEvent;
-    void SetDirty();
+    void SetDirty(PropertiesChangedEventArg::ChangeFlag);
     PropertyTreeNode* parent;
+    PropertyTree::PropertyType type;
+
 public:
     PropertyTree* tree;
     string nodePath;
@@ -112,8 +126,9 @@ public:
 
     Kind kind;
 
-    PropertyTreeNode(PropertyTree* t, PropertyTreeNode* parent, string p) 
-        : parent(parent)
+    PropertyTreeNode(PropertyTree* t, PropertyTreeNode* parent, string p)
+        :  parent(parent)
+        , type(PropertyTree::UNKNOWN)
         , tree(t)
         , nodePath(p)
         , isSet(false)
@@ -122,11 +137,14 @@ public:
     }
     void Refresh(bool recursive=false);
     void SetValue(const string v);
-public:    
+public:
     ~PropertyTreeNode();
 
+    PropertyTree* GetTree();
+    PropertyTree::PropertyType GetType();
+
     PropertyTreeNode* GetParent();
-    
+
     bool IsArray() {
         return (kind == ARRAY);
     }
@@ -144,43 +162,58 @@ public:
     }
 
     template <class T>
-    void SetPath(string keyPath, T val) {        
+    void SetPath(string keyPath, T val) {
         PropertyTreeNode* node = GetNodePath(keyPath);
         node->Set(val);
-    }    
+    }
 
     template <class T>
     T Get( T def) {
+        PropertyTree::PropertyType oldType = type;
+        type = WhatType<T>();
+
+        if (oldType != type) {
+            SetDirty(PropertiesChangedEventArg::TYPE);
+        }
+
         if (isSet) {
             T val = ConvertFromString<T>(value);
-            return val;            
+            return val;
         } else {
             return ConvertFromSpecialNode<T>(this, def);
-        }       
+        }
     }
-    
+
     template <class T>
     void Set(T val) {
+        PropertyTree::PropertyType oldType = type;
+        type = WhatType<T>();
+
         if (!ConvertToSpecial<T>(this, val)) {
             isSet = true;
             value = ConvertToString(val);
         }
-        SetDirty();
+        PropertiesChangedEventArg::ChangeFlag flag = PropertiesChangedEventArg::VALUE;
+        if (oldType != type)
+            flag = PropertiesChangedEventArg::ChangeFlag(flag |
+                                                         PropertiesChangedEventArg::TYPE);
+
+        SetDirty(flag);
     }
 
     unsigned int GetSize();
-    
+
     PropertyTreeNode* GetNodePath(string nodePath);
 
     PropertyTreeNode* GetNodeIdx(unsigned int i);
     PropertyTreeNode* GetNode(string key);
 
     bool HaveNode(string kp);
-    
+
     Core::IEvent<PropertiesChangedEventArg>& PropertiesChangedEvent() {
         return changedEvent;
     }
-    
+
     string ToString(int tabs=0);
 
 };

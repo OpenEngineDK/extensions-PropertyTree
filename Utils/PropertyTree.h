@@ -28,10 +28,22 @@ class PropertyTreeNode;
 using namespace std;
 
 class PropertiesChangedEventArg {
-public:
-    PropertyTreeNode* node;
+public:    
+    enum ChangeFlag {
+        VALUE = 1 << 0,
+        TYPE = 1 << 1
+    };
 
-    PropertiesChangedEventArg(PropertyTreeNode* n) :node(n) {}
+private:
+    PropertyTreeNode* node;
+    ChangeFlag flags;
+    
+public:    
+    PropertiesChangedEventArg(PropertyTreeNode* n, ChangeFlag f=VALUE) 
+  : node(n), flags(f) {}
+    PropertyTreeNode* GetNode() { return node; }
+    bool IsValueChange() { return flags & VALUE; }
+    bool IsTypeChange() { return flags & TYPE; }
 };
 
 /**
@@ -42,10 +54,10 @@ public:
 class PropertyTree : public Core::IListener<Core::ProcessEventArg> {
     friend class PropertyTreeNode;    
 protected:    
-    void AddToDirtySet(PropertyTreeNode* n);
+    void AddToDirtySet(PropertyTreeNode* n, PropertiesChangedEventArg::ChangeFlag f);
 
 private:
-    set<PropertyTreeNode*> dirtySet;
+    set<pair<PropertyTreeNode*,PropertiesChangedEventArg::ChangeFlag> > dirtySet;
     PropertyTreeNode* root;
     YAML::Node doc;
 
@@ -60,6 +72,13 @@ private:
 
     Core::Event<PropertiesChangedEventArg> changedEvent;
 public:
+    enum PropertyType {
+        UNKNOWN,
+        FLOAT,
+        VEC3F
+    };
+
+
     const YAML::Node* NodeForKeyPath(string key);
 
     template<class T>

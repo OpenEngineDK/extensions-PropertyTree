@@ -14,6 +14,7 @@
 #include <boost/algorithm/string.hpp>
 #include <Logging/Logger.h>
 #include <Resources/File.h>
+#include <Utils/Convert.h>
 
 namespace OpenEngine {
 namespace Utils {
@@ -34,8 +35,9 @@ PropertyTreeNode* PropertyTree::GetRootNode() {
 }
 
 
-void PropertyTree::AddToDirtySet(PropertyTreeNode* n) {
-    dirtySet.insert(n);
+void PropertyTree::AddToDirtySet(PropertyTreeNode* n,
+                                 PropertiesChangedEventArg::ChangeFlag f) {
+    dirtySet.insert(make_pair<>(n,f));
 }
     
 bool PropertyTree::HaveKey(std::string p, std::string k) {
@@ -149,6 +151,9 @@ public:
     Emitter(PropertyTree* t) : tree(t) {}
     
     void EmitArray(PropertyTreeNode* node) {
+        if (node->GetType() == PropertyTree::VEC3F) {
+            out << YAML::Flow;
+        }
         out << YAML::BeginSeq;
         for (vector<PropertyTreeNode*>::iterator itr = node->subNodesArray.begin();
              itr != node->subNodesArray.end();
@@ -205,13 +210,14 @@ void PropertyTree::Handle(Core::ProcessEventArg arg) {
         ReloadIfNeeded();
     }
     if (dirtySet.size()) {
-        for(set<PropertyTreeNode*>::iterator itr = dirtySet.begin();
+        for(set<pair<PropertyTreeNode*,PropertiesChangedEventArg::ChangeFlag> >::iterator itr = dirtySet.begin();
             itr != dirtySet.end();
             itr++) {
-            PropertyTreeNode* n = *itr;
-            PropertiesChangedEventArg arg(n);
+            PropertyTreeNode* n = itr->first;
+            PropertiesChangedEventArg::ChangeFlag flag = itr->second;
+            PropertiesChangedEventArg arg(n, flag);
             n->PropertiesChangedEvent().Notify(arg);
-            logger.error << "dirty " << n->nodePath << logger.end;
+            //logger.error << "dirty " << n->nodePath << logger.end;
         }
         dirtySet.clear();
     }
