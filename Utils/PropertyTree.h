@@ -31,7 +31,8 @@ class PropertiesChangedEventArg {
 public:    
     enum ChangeFlag {
         VALUE = 1 << 0,
-        TYPE = 1 << 1
+        TYPE = 1 << 1,
+        STRUCTURE = 1 << 2
     };
 
 private:
@@ -44,6 +45,7 @@ public:
     PropertyTreeNode* GetNode() { return node; }
     bool IsValueChange() { return flags & VALUE; }
     bool IsTypeChange() { return flags & TYPE; }
+    bool IsStructureChange() { return flags & STRUCTURE; }
 };
 
 /**

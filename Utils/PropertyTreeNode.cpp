@@ -227,8 +227,10 @@ PropertyTreeNode* PropertyTreeNode::GetNodePath(string nodePath) {
      string p = key;
      if (nodePath.compare("") != 0)
          p = nodePath + "." + key;     
-     if (i >= subNodesArray.size())
+     if (i >= subNodesArray.size()) {
          subNodesArray.push_back(new PropertyTreeNode(tree,this,p));
+         SetDirty(PropertiesChangedEventArg::STRUCTURE);        
+     }
      return subNodesArray[i];
  }
 
@@ -240,6 +242,7 @@ PropertyTreeNode* PropertyTreeNode::GetNode(string key) {
         p = nodePath + "." + key;
     if (!subNodes.count(key)) {
         subNodes[key] = new PropertyTreeNode(tree,this,p);
+        SetDirty(PropertiesChangedEventArg::STRUCTURE);
     }
 
     return subNodes[key];

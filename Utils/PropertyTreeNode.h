@@ -148,6 +148,12 @@ public:
     bool IsArray() {
         return (kind == ARRAY);
     }
+    bool IsMap() {
+        return (kind == MAP);
+    }
+    string GetNodePath() {
+        return nodePath;
+    }
 
     template <class T>
     T GetIdx(int i, T def) {
