@@ -163,7 +163,6 @@ public:
     template <class T>
     T GetIdx(int i, T def) {
         PropertyTreeNode* node = GetNodeIdx(i);
-        logger.error << "GetN: " << node->GetNodePath() << logger.end;
         return node->Get(def);
     }
 
@@ -226,6 +225,7 @@ public:
     PropertyTreeNode* GetNode(string key);
 
     bool HaveNode(string kp);
+    bool HaveNodePath(string kp);
 
     Core::IEvent<PropertiesChangedEventArg>& PropertiesChangedEvent() {
         return changedEvent;

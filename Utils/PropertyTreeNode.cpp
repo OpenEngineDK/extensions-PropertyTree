@@ -54,8 +54,6 @@ Vector<3,float> ConvertFromSpecialNode<Vector<3,float> >(PropertyTreeNode* n,
     Vector<3,float> v = def;
     n->kind = PropertyTreeNode::ARRAY;
 
-    logger.error << "Setting vector: " << n->GetNodePath() << logger.end;
-
     v[0] = n->GetIdx(0,v[0]);
     v[1] = n->GetIdx(1,v[0]);
     v[2] = n->GetIdx(2,v[0]);
@@ -258,6 +256,22 @@ unsigned int PropertyTreeNode::GetSize() {
 
 bool PropertyTreeNode::HaveNode(string kp) {
     return subNodes.count(kp);
+}
+bool PropertyTreeNode::HaveNodePath(string kp) {
+    using namespace boost;
+    vector<string> paths;
+    split(paths, kp, is_any_of("."));
+    PropertyTreeNode* node = this;
+    for (vector<string>::iterator itr = paths.begin();
+         itr != paths.end();
+         itr++) {
+        string pathPart = *itr;
+        if (node->HaveNode(pathPart))
+            node = node->GetNode(pathPart);
+        else 
+            return false;
+    }
+    return true;
 }
 
 
