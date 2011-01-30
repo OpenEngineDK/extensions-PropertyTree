@@ -26,6 +26,8 @@ template <> PropertyTree::PropertyType WhatType<int >()
 { return PropertyTree::INT32;}
 template <> PropertyTree::PropertyType WhatType<unsigned int >() 
 { return PropertyTree::UINT32;}
+template <> PropertyTree::PropertyType WhatType<bool >() 
+{ return PropertyTree::BOOL;}
 
     // Conversion
 

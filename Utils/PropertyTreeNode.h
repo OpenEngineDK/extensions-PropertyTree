@@ -40,6 +40,7 @@ using namespace std;
     template <> PropertyTree::PropertyType WhatType<float >();
     template <> PropertyTree::PropertyType WhatType<int >();
     template <> PropertyTree::PropertyType WhatType<unsigned int >();
+    template <> PropertyTree::PropertyType WhatType<bool >();
 
     // String conversion
 

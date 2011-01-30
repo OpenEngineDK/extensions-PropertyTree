@@ -79,6 +79,7 @@ public:
         INT32,
         UINT32,
         FLOAT,
+        BOOL,
         VEC3F
     };
 
