@@ -16,6 +16,7 @@
 #include <map>
 #include <sstream>
 #include <Math/Vector.h>
+#include <Math/RGBAColor.h>
 #include <Logging/Logger.h>
 #include <boost/algorithm/string.hpp>
 #include <Core/Event.h>
@@ -37,6 +38,7 @@ using namespace std;
     }
 
     template <> PropertyTree::PropertyType WhatType<Math::Vector<3,float> >();
+    template <> PropertyTree::PropertyType WhatType<Math::RGBAColor >();
     template <> PropertyTree::PropertyType WhatType<float >();
     template <> PropertyTree::PropertyType WhatType<int >();
     template <> PropertyTree::PropertyType WhatType<unsigned int >();
@@ -51,11 +53,9 @@ using namespace std;
         return ostream.str();
     }
 
-    template <>
-    string ConvertToString<Math::Vector<3,float> >(Math::Vector<3,float>);
-
-    template <>
-    string ConvertToString<Math::Vector<3,float> >(Math::Vector<3,float>);
+    template <> string ConvertToString<Math::Vector<3,float> >(Math::Vector<3,float>);
+    template <> string ConvertToString<Math::Vector<3,float> >(Math::Vector<3,float>);
+    template <> string ConvertToString<Math::RGBAColor >(Math::RGBAColor);
 
 
     template <class T>
@@ -79,11 +79,9 @@ using namespace std;
         return val;
     }
 
-    template <>
-    Math::Vector<3,float> ConvertFromString<Math::Vector<3,float> >(string s);
-
-    template <>
-    Math::Vector<4,float> ConvertFromString<Math::Vector<4,float> >(string s);
+    template <> Math::Vector<3,float> ConvertFromString<Math::Vector<3,float> >(string s);
+    template <> Math::Vector<4,float> ConvertFromString<Math::Vector<4,float> >(string s);
+    template <> Math::RGBAColor ConvertFromString<Math::RGBAColor >(string s);
 
     // special
 

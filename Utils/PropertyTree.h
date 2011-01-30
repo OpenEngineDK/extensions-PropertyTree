@@ -82,7 +82,8 @@ public:
         UINT32,
         FLOAT,
         BOOL,
-        VEC3F
+        VEC3F,
+        RGBACOLOR
     };
 
 

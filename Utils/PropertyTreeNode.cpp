@@ -20,6 +20,8 @@ using namespace std;
 
 template <> PropertyTree::PropertyType WhatType<Vector<3,float> >() 
 { return PropertyTree::VEC3F;}
+template <> PropertyTree::PropertyType WhatType<RGBAColor >() 
+{ return PropertyTree::RGBACOLOR;}
 template <> PropertyTree::PropertyType WhatType<float >() 
 { return PropertyTree::FLOAT;}
 template <> PropertyTree::PropertyType WhatType<int >() 
@@ -50,8 +52,19 @@ Math::Vector<4,float> ConvertFromString<Math::Vector<4,float> >(string s) {
     istream >> v[2];
     istream >> v[3];
     return v;
-
 }
+
+template <>
+Math::RGBAColor ConvertFromString<Math::RGBAColor >(string s) {
+    RGBAColor v;
+    istringstream istream(s);
+    istream >> v[0];
+    istream >> v[1];
+    istream >> v[2];
+    istream >> v[3];
+    return v;
+}
+
 
 
 template <>
@@ -102,6 +115,17 @@ string ConvertToString<Vector<4,float> >(Vector<4,float> v) {
     ostream << v[3] << " ";
     return ostream.str();
 }
+
+template <>
+string ConvertToString<RGBAColor >(RGBAColor v) {
+    ostringstream ostream;
+    ostream << v[0] << " ";
+    ostream << v[1] << " ";
+    ostream << v[2] << " ";
+    ostream << v[3] << " ";
+    return ostream.str();
+}
+
 
 template <>
 bool ConvertToSpecial<Vector<3,float> >(PropertyTreeNode* n, Vector<3,float> v) {
