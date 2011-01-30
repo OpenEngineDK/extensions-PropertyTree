@@ -97,7 +97,7 @@ using namespace std;
 
 
 /**
- * Short description.
+ * Tree structure used for configurations
  *
  * @class PropertyTreeNode PropertyTreeNode.h ons/PropertyTree/Utils/PropertyTreeNode.h
  */

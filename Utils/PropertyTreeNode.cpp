@@ -55,8 +55,8 @@ Vector<3,float> ConvertFromSpecialNode<Vector<3,float> >(PropertyTreeNode* n,
     n->kind = PropertyTreeNode::ARRAY;
 
     v[0] = n->GetIdx(0,v[0]);
-    v[1] = n->GetIdx(1,v[0]);
-    v[2] = n->GetIdx(2,v[0]);
+    v[1] = n->GetIdx(1,v[1]);
+    v[2] = n->GetIdx(2,v[2]);
     
     return v;
 }
@@ -68,9 +68,9 @@ Vector<4,float> ConvertFromSpecialNode<Vector<4,float> >(PropertyTreeNode* n,
     n->kind = PropertyTreeNode::ARRAY;
 
     v[0] = n->GetIdx(0,v[0]);
-    v[1] = n->GetIdx(1,v[0]);
-    v[2] = n->GetIdx(2,v[0]);
-    v[3] = n->GetIdx(3,v[0]);       
+    v[1] = n->GetIdx(1,v[1]);
+    v[2] = n->GetIdx(2,v[2]);
+    v[3] = n->GetIdx(3,v[3]);       
     
     return v;
 }
