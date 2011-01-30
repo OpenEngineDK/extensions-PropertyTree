@@ -11,6 +11,7 @@
 #ifndef _OE_PROPERTY_BINDER_H_
 #define _OE_PROPERTY_BINDER_H_
 
+#include <Core/IListener.h>
 #include <Utils/PropertyTree.h>
 
 namespace OpenEngine {
@@ -22,7 +23,7 @@ namespace Utils {
  * @class PropertyBinder PropertyBinder.h ons/PropertyTree/Utils/PropertyBinder.h
  */
 template <class C, class T>
-class PropertyBinder : public IListener<PropertiesChangedEventArg> {
+class PropertyBinder : public Core::IListener<PropertiesChangedEventArg> {
 private:
     PropertyTreeNode* node;
     C& instance;
