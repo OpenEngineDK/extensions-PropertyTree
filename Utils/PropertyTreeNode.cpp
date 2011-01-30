@@ -22,6 +22,10 @@ template <> PropertyTree::PropertyType WhatType<Vector<3,float> >()
 { return PropertyTree::VEC3F;}
 template <> PropertyTree::PropertyType WhatType<float >() 
 { return PropertyTree::FLOAT;}
+template <> PropertyTree::PropertyType WhatType<int >() 
+{ return PropertyTree::INT32;}
+template <> PropertyTree::PropertyType WhatType<unsigned int >() 
+{ return PropertyTree::UINT32;}
 
     // Conversion
 

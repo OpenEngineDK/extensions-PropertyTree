@@ -38,6 +38,8 @@ using namespace std;
 
     template <> PropertyTree::PropertyType WhatType<Math::Vector<3,float> >();
     template <> PropertyTree::PropertyType WhatType<float >();
+    template <> PropertyTree::PropertyType WhatType<int >();
+    template <> PropertyTree::PropertyType WhatType<unsigned int >();
 
     // String conversion
 
@@ -187,7 +189,6 @@ public:
         if (oldType != type) {
             SetDirty(PropertiesChangedEventArg::TYPE);
         }
-
         if (isSet) {
             T val = ConvertFromString<T>(value);
             return val;
@@ -204,9 +205,12 @@ public:
         type = WhatType<T>();
 
         if (!ConvertToSpecial<T>(this, val)) {
-            isSet = !skipEvent;
+            //isSet = !skipEvent;
             value = ConvertToString(val);
         }
+        
+        isSet = true;
+
         if (skipEvent)
             return;
         PropertiesChangedEventArg::ChangeFlag flag = PropertiesChangedEventArg::VALUE;

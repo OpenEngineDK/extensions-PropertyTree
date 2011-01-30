@@ -76,6 +76,8 @@ private:
 public:
     enum PropertyType {
         UNKNOWN,
+        INT32,
+        UINT32,
         FLOAT,
         VEC3F
     };
