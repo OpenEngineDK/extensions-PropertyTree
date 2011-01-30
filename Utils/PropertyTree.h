@@ -30,9 +30,10 @@ using namespace std;
 class PropertiesChangedEventArg {
 public:    
     enum ChangeFlag {
-        VALUE = 1 << 0,
-        TYPE = 1 << 1,
-        STRUCTURE = 1 << 2
+        VALUE = 1 << 0,         // 1
+        TYPE = 1 << 1,         // 2
+        STRUCTURE = 1 << 2,    // 4
+        IS_RECURSIVE = 1 << 3
     };
 
 private:
@@ -45,6 +46,7 @@ public:
     PropertyTreeNode* GetNode() { return node; }
     bool IsValueChange() { return flags & VALUE; }
     bool IsTypeChange() { return flags & TYPE; }
+    bool IsRecursive() { return flags & IS_RECURSIVE; }
     bool IsStructureChange() { return flags & STRUCTURE; }
 };
 

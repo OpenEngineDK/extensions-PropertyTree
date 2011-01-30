@@ -224,8 +224,7 @@ void PropertyTree::Handle(Core::ProcessEventArg arg) {
             PropertyTreeNode* n = itr->first;
             PropertiesChangedEventArg::ChangeFlag flag = itr->second;
             PropertiesChangedEventArg arg(n, flag);
-            n->PropertiesChangedEvent().Notify(arg);
-            //logger.error << "dirty " << n->nodePath << logger.end;
+            n->PropertiesChangedEvent().Notify(arg);            
         }
         dirtySet.clear();
     }

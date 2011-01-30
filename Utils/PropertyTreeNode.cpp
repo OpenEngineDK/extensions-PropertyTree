@@ -188,7 +188,6 @@ string PropertyTreeNode::ToString(int tabs) {
 }
 
 
-
 void PropertyTreeNode::Refresh(bool recursive) {
     list<string> clearList;
     for (map<string,string>::iterator itr = localCache.begin();
@@ -286,7 +285,9 @@ bool PropertyTreeNode::HaveNodePath(string kp) {
 void PropertyTreeNode::SetDirty(PropertiesChangedEventArg::ChangeFlag f) {
     tree->AddToDirtySet(this, f);
     if (parent)
-        parent->SetDirty(f);
+        parent->SetDirty(PropertiesChangedEventArg::ChangeFlag(f  |
+                                                               
+ PropertiesChangedEventArg::IS_RECURSIVE));
 
 }
 PropertyTreeNode* PropertyTreeNode::GetParent() {
