@@ -53,22 +53,23 @@ Math::Vector<4,float> ConvertFromString<Math::Vector<4,float> >(string s) {
 
 
 template <>
-Vector<3,float> ConvertFromSpecialNode<Vector<3,float> >(PropertyTreeNode* n,
-                                                         Vector<3,float> def) {
-    Vector<3,float> v = def;
+bool ConvertFromSpecialNode<Vector<3,float> >(PropertyTreeNode* n,
+                                                         Vector<3,float>* def) {
+    Vector<3,float> v = *def;
     n->kind = PropertyTreeNode::ARRAY;
 
     v[0] = n->GetIdx(0,v[0]);
     v[1] = n->GetIdx(1,v[1]);
     v[2] = n->GetIdx(2,v[2]);
     
-    return v;
+    *def = v;
+    return true;
 }
 
 template <>
-Vector<4,float> ConvertFromSpecialNode<Vector<4,float> >(PropertyTreeNode* n,
-                                                         Vector<4,float> def) {
-    Vector<4,float> v = def;
+bool ConvertFromSpecialNode<Vector<4,float> >(PropertyTreeNode* n,
+                                                         Vector<4,float>* def) {
+    Vector<4,float> v = *def;
     n->kind = PropertyTreeNode::ARRAY;
 
     v[0] = n->GetIdx(0,v[0]);
@@ -76,7 +77,8 @@ Vector<4,float> ConvertFromSpecialNode<Vector<4,float> >(PropertyTreeNode* n,
     v[2] = n->GetIdx(2,v[2]);
     v[3] = n->GetIdx(3,v[3]);       
     
-    return v;
+    *def = v;
+    return true;
 }
 
 

@@ -84,18 +84,20 @@ using namespace std;
     template <>
     Math::Vector<4,float> ConvertFromString<Math::Vector<4,float> >(string s);
 
+    // special
+
     template <class T>
-    T ConvertFromSpecialNode(PropertyTreeNode* n, T def) {
-        return def;
+    bool ConvertFromSpecialNode(PropertyTreeNode* n, T* def) {
+        return false;
     }
 
     template <>
-    Math::Vector<3,float> ConvertFromSpecialNode<Math::Vector<3,float> >
-    (PropertyTreeNode* n, Math::Vector<3,float> def);
+    bool ConvertFromSpecialNode<Math::Vector<3,float> >
+    (PropertyTreeNode* n, Math::Vector<3,float>* def);
 
     template <>
-    Math::Vector<4,float> ConvertFromSpecialNode<Math::Vector<4,float> >
-    (PropertyTreeNode* n, Math::Vector<4,float> def);
+    bool ConvertFromSpecialNode<Math::Vector<4,float> >
+    (PropertyTreeNode* n, Math::Vector<4,float>* def);
 
 
 /**
@@ -189,14 +191,18 @@ public:
         if (oldType != type) {
             SetDirty(PropertiesChangedEventArg::TYPE);
         }
-        if (isSet) {
-            T val = ConvertFromString<T>(value);
-            return val;
-        } else {
-            T val = ConvertFromSpecialNode<T>(this, def);
-            Set(val,true);
-            return val;
+        
+        T val = def;
+        if (!ConvertFromSpecialNode<T>(this, &val)) {
+            if (isSet)
+                val = ConvertFromString<T>(value);
+            else {
+                Set(val,true);
+            }
         }
+        
+        return val;
+        
     }
 
     template <class T>
@@ -204,8 +210,8 @@ public:
         PropertyTree::PropertyType oldType = type;
         type = WhatType<T>();
 
-        if (!ConvertToSpecial<T>(this, val)) {
-            //isSet = !skipEvent;
+        if (!ConvertToSpecial<T>(this, val)) {            
+            isSet = !skipEvent;
             value = ConvertToString(val);
         }
         
