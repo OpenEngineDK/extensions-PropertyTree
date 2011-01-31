@@ -27,7 +27,7 @@ PropertyTree::PropertyTree() {
 
 PropertyTree::PropertyTree(string fname) : filename(fname) {
     root = new PropertyTreeNode(this, NULL, "");
-    LoadFromFile(fname);
+    Reload(true);
 }
 
 PropertyTreeNode* PropertyTree::GetRootNode() {
