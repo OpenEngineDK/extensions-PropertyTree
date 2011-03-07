@@ -53,10 +53,12 @@ using namespace std;
         return ostream.str();
     }
 
-    template <> string ConvertToString<Math::Vector<3,float> >(Math::Vector<3,float>);
-    template <> string ConvertToString<Math::Vector<3,float> >(Math::Vector<3,float>);
-    template <> string ConvertToString<Math::RGBAColor >(Math::RGBAColor);
-
+    template <> 
+    string ConvertToString<Math::Vector<3,float> >(Math::Vector<3,float>);
+    template <> 
+    string ConvertToString<Math::Vector<4,float> >(Math::Vector<4,float>);
+    template <>
+    string ConvertToString<Math::RGBAColor >(Math::RGBAColor);
 
     template <class T>
     bool ConvertToSpecial(PropertyTreeNode* n, T val) {
