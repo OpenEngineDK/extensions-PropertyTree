@@ -1,7 +1,7 @@
 # PropertyTree dist
 
 # standard set of extensions
-darcs /extensions/PropertyTree        http://openengine.dk/code/extensions/PropertyTree
+git /extensions/PropertyTree        https://github.com/OpenEngineDK/extensions-PropertyTree.git
 
-darcs-dev /extensions/PropertyTree    fh.daimi.au.dk:/users/cgd/code/extensions/PropertyTree
+git-dev /extensions/PropertyTree    git@github.com:OpenEngineDK/extensions-PropertyTree.git
 
